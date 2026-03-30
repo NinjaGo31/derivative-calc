@@ -6,9 +6,12 @@
 
 // #include "../include/tokens.hpp"
 
+/*
+    Looking for polynomials in the incorrect format 
+    (e.g., xC & 2xC where C is a constant)
+*/
 bool isInvalidPolyFormat(const std::string& poly) {
-    if (!poly.empty() && std::isdigit(*(poly.end() - 1))
-        && std::isalpha(*(poly.end() - 2))) {
+    if (std::isdigit(*(poly.end() - 1)) && std::isalpha(*(poly.end() - 2))) {
         return true;
     }
 
@@ -30,20 +33,20 @@ int main(int argc, char* argv[]) {
         if (std::isalnum(c)) {            
             buf += c;
         } else { /* Whitespace, a special character, or EOT */
-            if (isInvalidPolyFormat(buf)) {
-                std::cerr << "Invalid expression: " << expr << "\n";
-                return -1;
-            }
-            
             if (!buf.empty()) {
+                if (isInvalidPolyFormat(buf)) {
+                    std::cerr << "Invalid expression: " << expr << "\n";
+                    return -1;
+                }
+            
                 args.emplace_back(buf);
                 buf.clear();
             }
         }
     }
 
-    if (buf.length() > 0) {
-        if (std::isdigit(*(buf.end() - 1)) && std::isalpha(*(buf.end() - 2))) {
+    if (!buf.empty()) {
+        if (isInvalidPolyFormat(buf)) {
             std::cerr << "Invalid expression: " << expr << "\n";
             return -1;
         }
